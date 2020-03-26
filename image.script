@@ -1,0 +1,664 @@
+%General Mission Analysis Tool(GMAT) Script
+%Created: 2019-12-11 15:51:42
+
+
+%----------------------------------------
+%---------- User-Defined Calculated Points
+%----------------------------------------
+
+Create LibrationPoint L1;
+GMAT L1.OrbitColor = GreenYellow;
+GMAT L1.TargetColor = DarkGray;
+GMAT L1.Primary = Sun;
+GMAT L1.Secondary = Earth;
+GMAT L1.Point = L1;
+
+
+%----------------------------------------
+%---------- Spacecraft
+%----------------------------------------
+
+Create Spacecraft SC;
+GMAT SC.DateFormat = A1ModJulian;
+GMAT SC.Epoch = '29215.50042863868';
+GMAT SC.CoordinateSystem = EarthFixed;
+GMAT SC.DisplayStateType = Cartesian;
+GMAT SC.X = -3214.000000000003;
+GMAT SC.Y = 2879.999999999978;
+GMAT SC.Z = 5354.999999999933;
+GMAT SC.VX = -4.373000000000004;
+GMAT SC.VY = -5.821999999999907;
+GMAT SC.VZ = 0.5060000000000001;
+GMAT SC.DryMass = 850;
+GMAT SC.Cd = 2.2;
+GMAT SC.Cr = 1.8;
+GMAT SC.DragArea = 15;
+GMAT SC.SRPArea = 1;
+GMAT SC.NAIFId = -10000001;
+GMAT SC.NAIFIdReferenceFrame = -9000001;
+GMAT SC.OrbitColor = Red;
+GMAT SC.TargetColor = Teal;
+GMAT SC.OrbitErrorCovariance = [ 1e+070 0 0 0 0 0 ; 0 1e+070 0 0 0 0 ; 0 0 1e+070 0 0 0 ; 0 0 0 1e+070 0 0 ; 0 0 0 0 1e+070 0 ; 0 0 0 0 0 1e+070 ];
+GMAT SC.CdSigma = 1e+070;
+GMAT SC.CrSigma = 1e+070;
+GMAT SC.Id = 'SatId';
+GMAT SC.Attitude = CoordinateSystemFixed;
+GMAT SC.SPADSRPScaleFactor = 1;
+GMAT SC.ModelFile = 'aura.3ds';
+GMAT SC.ModelOffsetX = 0;
+GMAT SC.ModelOffsetY = 0;
+GMAT SC.ModelOffsetZ = 0;
+GMAT SC.ModelRotationX = 0;
+GMAT SC.ModelRotationY = 0;
+GMAT SC.ModelRotationZ = 0;
+GMAT SC.ModelScale = 1;
+GMAT SC.AttitudeDisplayStateType = 'Quaternion';
+GMAT SC.AttitudeRateDisplayStateType = 'AngularVelocity';
+GMAT SC.AttitudeCoordinateSystem = EarthMJ2000Eq;
+GMAT SC.EulerAngleSequence = '321';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%----------------------------------------
+%---------- ForceModels
+%----------------------------------------
+
+Create ForceModel DefaultProp_ForceModel;
+GMAT DefaultProp_ForceModel.CentralBody = Earth;
+GMAT DefaultProp_ForceModel.PrimaryBodies = {Earth};
+GMAT DefaultProp_ForceModel.PointMasses = {Jupiter, Luna, Sun};
+GMAT DefaultProp_ForceModel.Drag = None;
+GMAT DefaultProp_ForceModel.SRP = Off;
+GMAT DefaultProp_ForceModel.RelativisticCorrection = Off;
+GMAT DefaultProp_ForceModel.ErrorControl = RSSStep;
+GMAT DefaultProp_ForceModel.GravityField.Earth.Degree = 4;
+GMAT DefaultProp_ForceModel.GravityField.Earth.Order = 4;
+GMAT DefaultProp_ForceModel.GravityField.Earth.StmLimit = 100;
+GMAT DefaultProp_ForceModel.GravityField.Earth.PotentialFile = 'JGM2.cof';
+GMAT DefaultProp_ForceModel.GravityField.Earth.TideModel = 'None';
+
+%----------------------------------------
+%---------- Propagators
+%----------------------------------------
+
+Create Propagator DefaultProp;
+GMAT DefaultProp.FM = DefaultProp_ForceModel;
+GMAT DefaultProp.Type = RungeKutta89;
+GMAT DefaultProp.InitialStepSize = 60;
+GMAT DefaultProp.Accuracy = 9.999999999999999e-012;
+GMAT DefaultProp.MinStep = 0.01;
+GMAT DefaultProp.MaxStep = 2700;
+GMAT DefaultProp.MaxStepAttempts = 50;
+GMAT DefaultProp.StopIfAccuracyIsViolated = true;
+
+%----------------------------------------
+%---------- Burns
+%----------------------------------------
+
+Create ImpulsiveBurn to_L1;
+GMAT to_L1.CoordinateSystem = Local;
+GMAT to_L1.Origin = Earth;
+GMAT to_L1.Axes = VNB;
+GMAT to_L1.Element1 = 0;
+GMAT to_L1.Element2 = 0;
+GMAT to_L1.Element3 = 0;
+GMAT to_L1.DecrementMass = false;
+GMAT to_L1.Isp = 300;
+GMAT to_L1.GravitationalAccel = 9.810000000000001;
+
+%----------------------------------------
+%---------- Coordinate Systems
+%----------------------------------------
+
+%  Create the coordinate system
+Create CoordinateSystem SE_L1;
+GMAT SE_L1.Origin = L1;
+GMAT SE_L1.Axes = ObjectReferenced;
+GMAT SE_L1.XAxis = R;
+GMAT SE_L1.ZAxis = N;
+GMAT SE_L1.Primary = Sun;
+GMAT SE_L1.Secondary = Earth;
+
+Create CoordinateSystem SE_E;
+GMAT SE_E.Origin = Earth;
+GMAT SE_E.Axes = ObjectReferenced;
+GMAT SE_E.XAxis = R;
+GMAT SE_E.ZAxis = N;
+GMAT SE_E.Primary = Sun;
+GMAT SE_E.Secondary = Earth;
+
+%----------------------------------------
+%---------- Subscribers
+%----------------------------------------
+
+Create ReportFile ReportFile1;
+GMAT ReportFile1.SolverIterations = None;
+GMAT ReportFile1.UpperLeft = [ 0.02 0.03929024081115336 ];
+GMAT ReportFile1.Size = [ 0.5958823529411764 0.7908745247148289 ];
+GMAT ReportFile1.RelativeZOrder = 65;
+GMAT ReportFile1.Maximized = false;
+GMAT ReportFile1.Filename = 'DefaultReportFile.txt';
+GMAT ReportFile1.Precision = 16;
+GMAT ReportFile1.WriteHeaders = true;
+GMAT ReportFile1.LeftJustify = On;
+GMAT ReportFile1.ZeroFill = Off;
+GMAT ReportFile1.FixedWidth = true;
+GMAT ReportFile1.Delimiter = ' ';
+GMAT ReportFile1.ColumnWidth = 23;
+GMAT ReportFile1.WriteReport = true;
+
+Create OrbitView OrbitView1;
+GMAT OrbitView1.SolverIterations = None;
+GMAT OrbitView1.UpperLeft = [ 0 0 ];
+GMAT OrbitView1.Size = [ 0.5 1.35890767230169 ];
+GMAT OrbitView1.RelativeZOrder = 178;
+GMAT OrbitView1.Maximized = true;
+GMAT OrbitView1.Add = {SC, Earth, L1};
+GMAT OrbitView1.CoordinateSystem = SE_L1;
+GMAT OrbitView1.DrawObject = [ true true true ];
+GMAT OrbitView1.DataCollectFrequency = 1;
+GMAT OrbitView1.UpdatePlotFrequency = 50;
+GMAT OrbitView1.NumPointsToRedraw = 0;
+GMAT OrbitView1.ShowPlot = true;
+GMAT OrbitView1.MaxPlotPoints = 20000;
+GMAT OrbitView1.ShowLabels = true;
+GMAT OrbitView1.ViewPointReference = L1;
+GMAT OrbitView1.ViewPointVector = [ 0 0 5000000 ];
+GMAT OrbitView1.ViewDirection = L1;
+GMAT OrbitView1.ViewScaleFactor = 1;
+GMAT OrbitView1.ViewUpCoordinateSystem = SE_L1;
+GMAT OrbitView1.ViewUpAxis = Y;
+GMAT OrbitView1.EclipticPlane = Off;
+GMAT OrbitView1.XYPlane = On;
+GMAT OrbitView1.WireFrame = Off;
+GMAT OrbitView1.Axes = On;
+GMAT OrbitView1.Grid = Off;
+GMAT OrbitView1.SunLine = Off;
+GMAT OrbitView1.UseInitialView = On;
+GMAT OrbitView1.StarCount = 7000;
+GMAT OrbitView1.EnableStars = Off;
+GMAT OrbitView1.EnableConstellations = On;
+
+%----------------------------------------
+%---------- Arrays, Variables, Strings
+%----------------------------------------
+
+Create Array DEC[1,144] AZI[1,144] V[1,144];
+Create Variable RA I;
+
+
+%----------------------------------------
+%---------- Mission Sequence
+%----------------------------------------
+
+BeginMissionSequence;
+
+
+GMAT DEC(1) = -90;
+GMAT DEC(2) = -90;
+GMAT DEC(3) = -90;
+GMAT DEC(4) = -70;
+GMAT DEC(5) = -70;
+GMAT DEC(6) = -70;
+GMAT DEC(7) = -70;
+GMAT DEC(8) = -70;
+GMAT DEC(9) = -70;
+GMAT DEC(10) = -70;
+GMAT DEC(11) = -70;
+GMAT DEC(12) = -70;
+GMAT DEC(13) = -70;
+GMAT DEC(14) = -70;
+GMAT DEC(15) = -70;
+GMAT DEC(16) = -70;
+GMAT DEC(17) = -70;
+GMAT DEC(18) = -70;
+GMAT DEC(19) = -70;
+GMAT DEC(20) = -70;
+GMAT DEC(21) = -70;
+GMAT DEC(22) = -70;
+GMAT DEC(23) = -50;
+GMAT DEC(24) = -50;
+GMAT DEC(25) = -50;
+GMAT DEC(26) = -50;
+GMAT DEC(27) = -50;
+GMAT DEC(28) = -50;
+GMAT DEC(29) = -50;
+GMAT DEC(30) = -50;
+GMAT DEC(31) = -50;
+GMAT DEC(32) = -50;
+GMAT DEC(33) = -50;
+GMAT DEC(34) = -50;
+GMAT DEC(35) = -50;
+GMAT DEC(36) = -50;
+GMAT DEC(37) = -50;
+GMAT DEC(38) = -50;
+GMAT DEC(39) = -50;
+GMAT DEC(40) = -50;
+GMAT DEC(41) = -50;
+GMAT DEC(42) = -30;
+GMAT DEC(43) = -30;
+GMAT DEC(44) = -30;
+GMAT DEC(45) = -30;
+GMAT DEC(46) = -30;
+GMAT DEC(47) = -30;
+GMAT DEC(48) = -30;
+GMAT DEC(49) = -30;
+GMAT DEC(50) = -30;
+GMAT DEC(51) = -30;
+GMAT DEC(52) = -30;
+GMAT DEC(53) = -30;
+GMAT DEC(54) = -30;
+GMAT DEC(55) = -30;
+GMAT DEC(56) = -30;
+GMAT DEC(57) = -30;
+GMAT DEC(58) = -30;
+GMAT DEC(59) = -30;
+GMAT DEC(60) = -30;
+GMAT DEC(61) = -10;
+GMAT DEC(62) = -10;
+GMAT DEC(63) = -10;
+GMAT DEC(64) = -10;
+GMAT DEC(65) = -10;
+GMAT DEC(66) = -10;
+GMAT DEC(67) = -10;
+GMAT DEC(68) = -10;
+GMAT DEC(69) = -10;
+GMAT DEC(70) = -10;
+GMAT DEC(71) = -10;
+GMAT DEC(72) = -10;
+GMAT DEC(73) = -10;
+GMAT DEC(74) = -10;
+GMAT DEC(75) = -10;
+GMAT DEC(76) = -10;
+GMAT DEC(77) = -10;
+GMAT DEC(78) = -10;
+GMAT DEC(79) = -10;
+GMAT DEC(80) = 10;
+GMAT DEC(81) = 10;
+GMAT DEC(82) = 10;
+GMAT DEC(83) = 10;
+GMAT DEC(84) = 10;
+GMAT DEC(85) = 10;
+GMAT DEC(86) = 10;
+GMAT DEC(87) = 10;
+GMAT DEC(88) = 10;
+GMAT DEC(89) = 10;
+GMAT DEC(90) = 10;
+GMAT DEC(91) = 10;
+GMAT DEC(92) = 10;
+GMAT DEC(93) = 10;
+GMAT DEC(94) = 10;
+GMAT DEC(95) = 10;
+GMAT DEC(96) = 10;
+GMAT DEC(97) = 10;
+GMAT DEC(98) = 10;
+GMAT DEC(99) = 30;
+GMAT DEC(100) = 30;
+GMAT DEC(101) = 30;
+GMAT DEC(102) = 30;
+GMAT DEC(103) = 30;
+GMAT DEC(104) = 30;
+GMAT DEC(105) = 50;
+GMAT DEC(106) = 50;
+GMAT DEC(107) = 50;
+GMAT DEC(108) = 50;
+GMAT DEC(109) = 50;
+GMAT DEC(110) = 50;
+GMAT DEC(111) = 50;
+GMAT DEC(112) = 50;
+GMAT DEC(113) = 50;
+GMAT DEC(114) = 50;
+GMAT DEC(115) = 50;
+GMAT DEC(116) = 50;
+GMAT DEC(117) = 50;
+GMAT DEC(118) = 50;
+GMAT DEC(119) = 50;
+GMAT DEC(120) = 50;
+GMAT DEC(121) = 50;
+GMAT DEC(122) = 50;
+GMAT DEC(123) = 50;
+GMAT DEC(124) = 70;
+GMAT DEC(125) = 70;
+GMAT DEC(126) = 70;
+GMAT DEC(127) = 70;
+GMAT DEC(128) = 70;
+GMAT DEC(129) = 70;
+GMAT DEC(130) = 70;
+GMAT DEC(131) = 70;
+GMAT DEC(132) = 70;
+GMAT DEC(133) = 70;
+GMAT DEC(134) = 70;
+GMAT DEC(135) = 70;
+GMAT DEC(136) = 70;
+GMAT DEC(137) = 70;
+GMAT DEC(138) = 70;
+GMAT DEC(139) = 70;
+GMAT DEC(140) = 70;
+GMAT DEC(141) = 70;
+GMAT DEC(142) = 70;
+GMAT DEC(143) = 90;
+GMAT DEC(144) = 90;
+
+
+GMAT AZI(1) = 180;
+GMAT AZI(2) = 200;
+GMAT AZI(3) = 220;
+GMAT AZI(4) = 0;
+GMAT AZI(5) = 20;
+GMAT AZI(6) = 40;
+GMAT AZI(7) = 60;
+GMAT AZI(8) = 80;
+GMAT AZI(9) = 100;
+GMAT AZI(10) = 120;
+GMAT AZI(11) = 140;
+GMAT AZI(12) = 160;
+GMAT AZI(13) = 180;
+GMAT AZI(14) = 200;
+GMAT AZI(15) = 220;
+GMAT AZI(16) = 240;
+GMAT AZI(17) = 260;
+GMAT AZI(18) = 280;
+GMAT AZI(19) = 300;
+GMAT AZI(20) = 320;
+GMAT AZI(21) = 340;
+GMAT AZI(22) = 360;
+GMAT AZI(23) = 0;
+GMAT AZI(24) = 20;
+GMAT AZI(25) = 40;
+GMAT AZI(26) = 60;
+GMAT AZI(27) = 80;
+GMAT AZI(28) = 100;
+GMAT AZI(29) = 120;
+GMAT AZI(30) = 140;
+GMAT AZI(31) = 160;
+GMAT AZI(32) = 180;
+GMAT AZI(33) = 200;
+GMAT AZI(34) = 220;
+GMAT AZI(35) = 240;
+GMAT AZI(36) = 260;
+GMAT AZI(37) = 280;
+GMAT AZI(38) = 300;
+GMAT AZI(39) = 320;
+GMAT AZI(40) = 340;
+GMAT AZI(41) = 360;
+GMAT AZI(42) = 0;
+GMAT AZI(43) = 20;
+GMAT AZI(44) = 40;
+GMAT AZI(45) = 60;
+GMAT AZI(46) = 80;
+GMAT AZI(47) = 100;
+GMAT AZI(48) = 120;
+GMAT AZI(49) = 140;
+GMAT AZI(50) = 160;
+GMAT AZI(51) = 180;
+GMAT AZI(52) = 200;
+GMAT AZI(53) = 220;
+GMAT AZI(54) = 240;
+GMAT AZI(55) = 260;
+GMAT AZI(56) = 280;
+GMAT AZI(57) = 300;
+GMAT AZI(58) = 320;
+GMAT AZI(59) = 340;
+GMAT AZI(60) = 360;
+GMAT AZI(61) = 0;
+GMAT AZI(62) = 20;
+GMAT AZI(63) = 40;
+GMAT AZI(64) = 60;
+GMAT AZI(65) = 80;
+GMAT AZI(66) = 100;
+GMAT AZI(67) = 120;
+GMAT AZI(68) = 140;
+GMAT AZI(69) = 160;
+GMAT AZI(70) = 180;
+GMAT AZI(71) = 200;
+GMAT AZI(72) = 220;
+GMAT AZI(73) = 240;
+GMAT AZI(74) = 260;
+GMAT AZI(75) = 280;
+GMAT AZI(76) = 300;
+GMAT AZI(77) = 320;
+GMAT AZI(78) = 340;
+GMAT AZI(79) = 360;
+GMAT AZI(80) = 0;
+GMAT AZI(81) = 20;
+GMAT AZI(82) = 40;
+GMAT AZI(83) = 60;
+GMAT AZI(84) = 80;
+GMAT AZI(85) = 100;
+GMAT AZI(86) = 120;
+GMAT AZI(87) = 140;
+GMAT AZI(88) = 160;
+GMAT AZI(89) = 180;
+GMAT AZI(90) = 200;
+GMAT AZI(91) = 220;
+GMAT AZI(92) = 240;
+GMAT AZI(93) = 260;
+GMAT AZI(94) = 280;
+GMAT AZI(95) = 300;
+GMAT AZI(96) = 320;
+GMAT AZI(97) = 340;
+GMAT AZI(98) = 360;
+GMAT AZI(99) = 0;
+GMAT AZI(100) = 20;
+GMAT AZI(101) = 40;
+GMAT AZI(102) = 60;
+GMAT AZI(103) = 80;
+GMAT AZI(104) = 360;
+GMAT AZI(105) = 0;
+GMAT AZI(106) = 20;
+GMAT AZI(107) = 40;
+GMAT AZI(108) = 60;
+GMAT AZI(109) = 80;
+GMAT AZI(110) = 100;
+GMAT AZI(111) = 120;
+GMAT AZI(112) = 140;
+GMAT AZI(113) = 160;
+GMAT AZI(114) = 180;
+GMAT AZI(115) = 200;
+GMAT AZI(116) = 220;
+GMAT AZI(117) = 240;
+GMAT AZI(118) = 260;
+GMAT AZI(119) = 280;
+GMAT AZI(120) = 300;
+GMAT AZI(121) = 320;
+GMAT AZI(122) = 340;
+GMAT AZI(123) = 360;
+GMAT AZI(124) = 0;
+GMAT AZI(125) = 20;
+GMAT AZI(126) = 40;
+GMAT AZI(127) = 60;
+GMAT AZI(128) = 80;
+GMAT AZI(129) = 100;
+GMAT AZI(130) = 120;
+GMAT AZI(131) = 140;
+GMAT AZI(132) = 160;
+GMAT AZI(133) = 180;
+GMAT AZI(134) = 200;
+GMAT AZI(135) = 220;
+GMAT AZI(136) = 240;
+GMAT AZI(137) = 260;
+GMAT AZI(138) = 280;
+GMAT AZI(139) = 300;
+GMAT AZI(140) = 320;
+GMAT AZI(141) = 340;
+GMAT AZI(142) = 360;
+GMAT AZI(143) = 320;
+GMAT AZI(144) = 340;
+
+
+GMAT V(1) = 0.0045717770856572295;
+GMAT V(2) = 0.06909805934352332;
+GMAT V(3) = 0.001444427921087481;
+GMAT V(4) = 0.03024778095830698;
+GMAT V(5) = 0.5050000000000003;
+GMAT V(6) = 0.5050000000000003;
+GMAT V(7) = 0.5050000000000003;
+GMAT V(8) = 0.5050000000000003;
+GMAT V(9) = 0.5050000000000003;
+GMAT V(10) = 0.5050000000000003;
+GMAT V(11) = 0.5050000000000003;
+GMAT V(12) = 0.01110502809926402;
+GMAT V(13) = 0.01660706960537936;
+GMAT V(14) = 0.000464904680266045;
+GMAT V(15) = 0.5050000000000003;
+GMAT V(16) = 0.01317460922815371;
+GMAT V(17) = 0.5050000000000003;
+GMAT V(18) = 0.007629230069578623;
+GMAT V(19) = 0.5050000000000003;
+GMAT V(20) = 0.2836431884771448;
+GMAT V(21) = 0.01400679342623334;
+GMAT V(22) = 0.022218505107448442;
+GMAT V(23) = 0.0238688957929844;
+GMAT V(24) = 0.001508924844092689;
+GMAT V(25) = 0.5050000000000003;
+GMAT V(26) = 0.5050000000000003;
+GMAT V(27) = 0.5050000000000003;
+GMAT V(28) = 0.5050000000000003;
+GMAT V(29) = 0.5050000000000003;
+GMAT V(30) = 0.5050000000000003;
+GMAT V(31) = 0.5050000000000003;
+GMAT V(32) = 0.0060675864509539676;
+GMAT V(33) = 0.009554916731431148;
+GMAT V(34) = 0.5050000000000003;
+GMAT V(35) = 0.005651131942286154;
+GMAT V(36) = 0.00676976835646201;
+GMAT V(37) = 0.011050250086118471;
+GMAT V(38) = 0.5050000000000003;
+GMAT V(39) = 0.02331579971883912;
+GMAT V(40) = 0.0127891588472994;
+GMAT V(41) = 0.021835516678984267;
+GMAT V(42) = 0.029576987305772486;
+GMAT V(43) = 0.5050000000000003;
+GMAT V(44) = 0.5050000000000003;
+GMAT V(45) = 0.5050000000000003;
+GMAT V(46) = 0.5050000000000003;
+GMAT V(47) = 0.5050000000000003;
+GMAT V(48) = 0.5050000000000003;
+GMAT V(49) = 0.5050000000000003;
+GMAT V(50) = 0.5050000000000003;
+GMAT V(51) = 0.5050000000000003;
+GMAT V(52) = 0.007389141430030576;
+GMAT V(53) = 0.006107034305459819;
+GMAT V(54) = 0.015280738657456818;
+GMAT V(55) = 0.5050000000000003;
+GMAT V(56) = 0.015207135858363469;
+GMAT V(57) = 0.5050000000000003;
+GMAT V(58) = 0.5050000000000003;
+GMAT V(59) = 0.01910151258518454;
+GMAT V(60) = 0.008065484364633448;
+GMAT V(61) = 0.009334244265337473;
+GMAT V(62) = 0.005664270457928069;
+GMAT V(63) = 0.5050000000000003;
+GMAT V(64) = 0.5050000000000003;
+GMAT V(65) = 0.5050000000000003;
+GMAT V(66) = 0.5050000000000003;
+GMAT V(67) = 0.5050000000000003;
+GMAT V(68) = 0.5050000000000003;
+GMAT V(69) = 0.5050000000000003;
+GMAT V(70) = 0.5050000000000003;
+GMAT V(71) = 0.01183647037309129;
+GMAT V(72) = 0.1438491966709263;
+GMAT V(73) = 0.008754655852098945;
+GMAT V(74) = 0.003643218631041235;
+GMAT V(75) = 0.5050000000000003;
+GMAT V(76) = 0.2139932210248663;
+GMAT V(77) = 0.0065043588081607605;
+GMAT V(78) = 0.01008393651165533;
+GMAT V(79) = 0.006501692750607618;
+GMAT V(80) = 0.0135434335359605;
+GMAT V(81) = 0.1188862298667664;
+GMAT V(82) = 0.002737753007677383;
+GMAT V(83) = 0.5050000000000003;
+GMAT V(84) = 0.5050000000000003;
+GMAT V(85) = 0.5050000000000003;
+GMAT V(86) = 0.5050000000000003;
+GMAT V(87) = 0.5050000000000003;
+GMAT V(88) = 0.5050000000000003;
+GMAT V(89) = 0.5050000000000003;
+GMAT V(90) = 0.013848425417090759;
+GMAT V(91) = 0.5050000000000003;
+GMAT V(92) = 0.006765830298536458;
+GMAT V(93) = 0.01426693644549232;
+GMAT V(94) = 0.5050000000000003;
+GMAT V(95) = 0.008382324578124097;
+GMAT V(96) = 0.1879806518548867;
+GMAT V(97) = 0.00427229710330721;
+GMAT V(98) = 0.01398313934274483;
+GMAT V(99) = 0.006954004450817592;
+GMAT V(100) = 0.01192941310175228;
+GMAT V(101) = 0.008829815721255727;
+GMAT V(102) = 0.003485081773833371;
+GMAT V(103) = 0.5050000000000003;
+GMAT V(104) = 0.003983148537226953;
+GMAT V(105) = 0.006252523501752876;
+GMAT V(106) = 0.006118709096335805;
+GMAT V(107) = 0.006138521400862375;
+GMAT V(108) = 0.00631269234989304;
+GMAT V(109) = 0.0066185869701439505;
+GMAT V(110) = 0.007011970527819357;
+GMAT V(111) = 0.007434955330681988;
+GMAT V(112) = 0.007828815532266163;
+GMAT V(113) = 0.008146673131850544;
+GMAT V(114) = 0.0083596612844849;
+GMAT V(115) = 0.008454392001149244;
+GMAT V(116) = 0.008426906284294088;
+GMAT V(117) = 0.008279677957179953;
+GMAT V(118) = 0.00802312134823296;
+GMAT V(119) = 0.007678897751611656;
+GMAT V(120) = 0.007281739703030325;
+GMAT V(121) = 0.006877674717106855;
+GMAT V(122) = 0.00651828660920728;
+GMAT V(123) = 0.006252523501752876;
+GMAT V(124) = 0.01337978607334662;
+GMAT V(125) = 0.0139735762233613;
+GMAT V(126) = 0.015045604573679159;
+GMAT V(127) = 0.016804260970675382;
+GMAT V(128) = 0.02020639825670514;
+GMAT V(129) = 0.5050000000000003;
+GMAT V(130) = 0.5050000000000003;
+GMAT V(131) = 0.5050000000000003;
+GMAT V(132) = 0.02434292378427927;
+GMAT V(133) = 0.020192130808136432;
+GMAT V(134) = 0.01819129408861045;
+GMAT V(135) = 0.01686186841398011;
+GMAT V(136) = 0.01576710207213181;
+GMAT V(137) = 0.01486434977676254;
+GMAT V(138) = 0.01413428972766269;
+GMAT V(139) = 0.013585276189842259;
+GMAT V(140) = 0.01324630338989664;
+GMAT V(141) = 0.01316004823718686;
+GMAT V(142) = 0.01337978607334662;
+GMAT V(143) = 0.02727398998977151;
+GMAT V(144) = 0.029591671350062836;
+
+
+For I = 1:1:2;
+   GMAT SC.Epoch = '29215.50042863868';
+   GMAT SC.Earth.RMAG = 6871;
+   GMAT SC.SE_E.VMAG = 10.74 + V(I);
+   GMAT SC.SE_E.FPA = 90;
+   GMAT SC.SE_E.RA = 340;
+   GMAT SC.SE_E.DEC = DEC(I);
+   GMAT SC.SE_E.AZI = AZI(I);
+   GMAT to_L1.Element1 = 0;
+	
+	Maneuver to_L1(SC);
+	Propagate DefaultProp(SC) {SC.ElapsedDays = 360};
+EndFor;

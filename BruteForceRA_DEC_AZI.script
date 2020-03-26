@@ -1,0 +1,197 @@
+%General Mission Analysis Tool(GMAT) Script
+%Created: 2020-02-15 17:37:59
+
+
+%----------------------------------------
+%---------- Spacecraft
+%----------------------------------------
+
+Create Spacecraft SC;
+GMAT SC.DateFormat = UTCGregorian;
+GMAT SC.Epoch = '01 Jan 2021 00:00:00.000';
+GMAT SC.CoordinateSystem = SE_E;
+GMAT SC.DisplayStateType = Cartesian;
+GMAT SC.X = -785.0680345204623;
+GMAT SC.Y = -7075.409311233471;
+GMAT SC.Z = 1192.581762264021;
+GMAT SC.VX = 7.020403764589525;
+GMAT SC.VY = -1.300794399678771;
+GMAT SC.VZ = -2.005865172665274;
+GMAT SC.DryMass = 850;
+GMAT SC.Cd = 2.2;
+GMAT SC.Cr = 1.8;
+GMAT SC.DragArea = 15;
+GMAT SC.SRPArea = 1;
+GMAT SC.NAIFId = -10001001;
+GMAT SC.NAIFIdReferenceFrame = -9001001;
+GMAT SC.OrbitColor = Red;
+GMAT SC.TargetColor = Teal;
+GMAT SC.OrbitErrorCovariance = [ 1e+070 0 0 0 0 0 ; 0 1e+070 0 0 0 0 ; 0 0 1e+070 0 0 0 ; 0 0 0 1e+070 0 0 ; 0 0 0 0 1e+070 0 ; 0 0 0 0 0 1e+070 ];
+GMAT SC.CdSigma = 1e+070;
+GMAT SC.CrSigma = 1e+070;
+GMAT SC.Id = 'SatId';
+GMAT SC.Attitude = CoordinateSystemFixed;
+GMAT SC.SPADSRPScaleFactor = 1;
+GMAT SC.ModelFile = 'aura.3ds';
+GMAT SC.ModelOffsetX = 0;
+GMAT SC.ModelOffsetY = 0;
+GMAT SC.ModelOffsetZ = 0;
+GMAT SC.ModelRotationX = 0;
+GMAT SC.ModelRotationY = 0;
+GMAT SC.ModelRotationZ = 0;
+GMAT SC.ModelScale = 1;
+GMAT SC.AttitudeDisplayStateType = 'Quaternion';
+GMAT SC.AttitudeRateDisplayStateType = 'AngularVelocity';
+GMAT SC.AttitudeCoordinateSystem = EarthMJ2000Eq;
+GMAT SC.EulerAngleSequence = '321';
+
+Create Spacecraft SC0;
+GMAT SC0.DateFormat = UTCGregorian;
+GMAT SC0.Epoch = '01 Jan 2021 00:00:00.000';
+GMAT SC0.CoordinateSystem = EarthMJ2000Eq;
+GMAT SC0.DisplayStateType = Cartesian;
+GMAT SC0.X = 7100;
+GMAT SC0.Y = 0;
+GMAT SC0.Z = 1300;
+GMAT SC0.VX = 0;
+GMAT SC0.VY = 7.35;
+GMAT SC0.VZ = 1;
+GMAT SC0.DryMass = 850;
+GMAT SC0.Cd = 2.2;
+GMAT SC0.Cr = 1.8;
+GMAT SC0.DragArea = 15;
+GMAT SC0.SRPArea = 1;
+GMAT SC0.NAIFId = -10001001;
+GMAT SC0.NAIFIdReferenceFrame = -9001001;
+GMAT SC0.OrbitColor = Red;
+GMAT SC0.TargetColor = Teal;
+GMAT SC0.OrbitErrorCovariance = [ 1e+070 0 0 0 0 0 ; 0 1e+070 0 0 0 0 ; 0 0 1e+070 0 0 0 ; 0 0 0 1e+070 0 0 ; 0 0 0 0 1e+070 0 ; 0 0 0 0 0 1e+070 ];
+GMAT SC0.CdSigma = 1e+070;
+GMAT SC0.CrSigma = 1e+070;
+GMAT SC0.Id = 'SatId';
+GMAT SC0.Attitude = CoordinateSystemFixed;
+GMAT SC0.SPADSRPScaleFactor = 1;
+GMAT SC0.ModelFile = 'aura.3ds';
+GMAT SC0.ModelOffsetX = 0;
+GMAT SC0.ModelOffsetY = 0;
+GMAT SC0.ModelOffsetZ = 0;
+GMAT SC0.ModelRotationX = 0;
+GMAT SC0.ModelRotationY = 0;
+GMAT SC0.ModelRotationZ = 0;
+GMAT SC0.ModelScale = 1;
+GMAT SC0.AttitudeDisplayStateType = 'Quaternion';
+GMAT SC0.AttitudeRateDisplayStateType = 'AngularVelocity';
+GMAT SC0.AttitudeCoordinateSystem = EarthMJ2000Eq;
+GMAT SC0.EulerAngleSequence = '321';
+
+
+
+
+
+
+
+
+
+
+
+
+
+%----------------------------------------
+%---------- ForceModels
+%----------------------------------------
+
+Create ForceModel DefaultProp_ForceModel;
+GMAT DefaultProp_ForceModel.CentralBody = Earth;
+GMAT DefaultProp_ForceModel.PrimaryBodies = {Earth};
+GMAT DefaultProp_ForceModel.Drag = None;
+GMAT DefaultProp_ForceModel.SRP = Off;
+GMAT DefaultProp_ForceModel.RelativisticCorrection = Off;
+GMAT DefaultProp_ForceModel.ErrorControl = RSSStep;
+GMAT DefaultProp_ForceModel.GravityField.Earth.Degree = 4;
+GMAT DefaultProp_ForceModel.GravityField.Earth.Order = 4;
+GMAT DefaultProp_ForceModel.GravityField.Earth.StmLimit = 100;
+GMAT DefaultProp_ForceModel.GravityField.Earth.PotentialFile = 'JGM2.cof';
+GMAT DefaultProp_ForceModel.GravityField.Earth.TideModel = 'None';
+
+%----------------------------------------
+%---------- Propagators
+%----------------------------------------
+
+Create Propagator DefaultProp;
+GMAT DefaultProp.FM = DefaultProp_ForceModel;
+GMAT DefaultProp.Type = RungeKutta89;
+GMAT DefaultProp.InitialStepSize = 60;
+GMAT DefaultProp.Accuracy = 9.999999999999999e-012;
+GMAT DefaultProp.MinStep = 0.001;
+GMAT DefaultProp.MaxStep = 2700;
+GMAT DefaultProp.MaxStepAttempts = 50;
+GMAT DefaultProp.StopIfAccuracyIsViolated = true;
+
+%----------------------------------------
+%---------- Coordinate Systems
+%----------------------------------------
+
+Create CoordinateSystem SE_E;
+GMAT SE_E.Origin = Earth;
+GMAT SE_E.Axes = ObjectReferenced;
+GMAT SE_E.XAxis = R;
+GMAT SE_E.ZAxis = N;
+GMAT SE_E.Primary = Sun;
+GMAT SE_E.Secondary = Earth;
+
+%----------------------------------------
+%---------- Subscribers
+%----------------------------------------
+
+Create ReportFile ReportFileRA;
+GMAT ReportFileRA.SolverIterations = Current;
+GMAT ReportFileRA.UpperLeft = [ 0.04411764705882353 0.1186206896551724 ];
+GMAT ReportFileRA.Size = [ 0.5988235294117648 0.7958620689655173 ];
+GMAT ReportFileRA.RelativeZOrder = 30;
+GMAT ReportFileRA.Maximized = false;
+GMAT ReportFileRA.Filename = 'C:\Users\bmw_7\Documents\HSE\яндю\ReportFileRA.txt';
+GMAT ReportFileRA.Precision = 16;
+GMAT ReportFileRA.WriteHeaders = true;
+GMAT ReportFileRA.LeftJustify = On;
+GMAT ReportFileRA.ZeroFill = Off;
+GMAT ReportFileRA.FixedWidth = true;
+GMAT ReportFileRA.Delimiter = ' ';
+GMAT ReportFileRA.ColumnWidth = 23;
+GMAT ReportFileRA.WriteReport = true;
+
+%----------------------------------------
+%---------- Arrays, Variables, Strings
+%----------------------------------------
+Create Variable RA DEC AZI;
+
+
+
+
+
+%----------------------------------------
+%---------- Mission Sequence
+%----------------------------------------
+
+BeginMissionSequence;
+
+GMAT SC.Earth.RMAG = 6871;
+GMAT SC.SE_E.VMAG = 10.74;
+GMAT SC0 = SC;
+
+For RA = 0:5:360;
+   For DEC = -90:5:90;
+      For AZI = 0:5:360;
+         GMAT SC = SC0;
+         GMAT SC.SE_E.RA = RA;
+         GMAT SC.SE_E.DEC = DEC;
+         GMAT SC.SE_E.AZI = AZI;
+         GMAT SC.SE_E.VMAG = 10.74;
+         GMAT SC.Earth.RMAG = 6871;
+         GMAT SC.SE_E.FPA = 90;
+         
+         Propagate DefaultProp(SC) {SC.Earth.Apoapsis};
+         
+         Report ReportFileRA SC.SE_E.X RA DEC AZI;
+      EndFor;
+   EndFor;
+EndFor;
